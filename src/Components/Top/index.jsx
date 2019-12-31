@@ -13,6 +13,7 @@ export default class Top extends Component {
             <div className="top-container">
                 <div className="title">Weather Up</div>
                 <Weather/>
+                <button className="btn btn-select-location">Select location</button>
             </div>
         )
     }
