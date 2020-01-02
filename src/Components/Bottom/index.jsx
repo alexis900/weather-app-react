@@ -8,9 +8,7 @@ export default class Top extends Component {
     }
     render() {
         return (
-            <div className="bottom-container">
-                
-            </div>
+            <div className="bottom-container"/>
         )
     }
 }
