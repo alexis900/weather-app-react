@@ -9,14 +9,16 @@ export default class Weather extends Component {
     }
 
     render() {
+        const { location, temperature, isDay, text, iconURL } = this.props
+
         return (
             <div className="weather-container">
-                <div className="header">Location Name</div>
+                <div className="header">{ location }</div>
                 <div className="inner-container">
-                    <div className="image"><img src={SunImg} alt=""/></div>
-                    <div className="current-weather">10 º</div>
+                    <div className="image"><img src={iconURL} alt=""/></div>
+                    <div className="current-weather">{ temperature }º</div>
                 </div>
-                <div className="footer">Sunny</div>
+                <div className="footer">{ text }</div>
             </div>
         )
     }
