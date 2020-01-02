@@ -7,7 +7,7 @@ import TopSection from './Components/Top/index'
 import BottomSection from './Components/Bottom/index'
 
 import axios from 'axios'
-const YOUR_ACCESS_KEY = "9f05f6a85aed0907eeda33c5586fa6bd"
+const YOUR_API_KEY = "640f42aa2e9f82c4d0016da7dc0b7605"
 
 
 class App extends Component {
@@ -16,35 +16,47 @@ class App extends Component {
     super(props);
     this.state = {
       cityName: "Barcelona",
-      forcastDays: 5,
       isLoading: true
     }
   }
 
   updateWeather(){
-    const { cityName, forcastDays } = this.state
-
-    const URL =  `http://api.weatherstack.com/current?access_key=${YOUR_ACCESS_KEY}&query=${cityName}&forecast_days=${forcastDays}`
+    const { cityName } = this.state
+    const URLweather = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${YOUR_API_KEY}&units=metric`
+    const URLforecast = `http://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${YOUR_API_KEY}&units=metric`
+    
     axios
-      .get(URL)
+      .get(URLweather)
       .then(res => {
-        console.log(res.data)
         return res.data;
        
       })
       .then(data => {
         this.setState({
-          isLoading: false,
-          temperature: data.current.temperature,
-          isDay: data.current.is_day,
-          text: data.current.weather_descriptions[0],
-          iconURL: data.current.weather_icons[0]
+          temperature: data.main.temp,
+          text: data.weather[0].description,
+          icon: data.weather[0].icon
         });
       })
       .catch(err => {
         if (err) console.error("Cannot fetch Weather Data from API, ", err);
       });
 
+      axios
+      .get(URLforecast)
+      .then(res => {
+        return res.data;
+      })
+      .then(data => {
+        this.setState({
+          isLoading: false,
+          forecastdays: data.list
+        });
+        console.log(this.state)
+      })
+      .catch(err => {
+        if (err) console.error("Cannot fetch Weather Data from API, ", err);
+      });
   }
 
   componentDidMount(){
@@ -56,10 +68,7 @@ class App extends Component {
     this.setState({
       cityName: data
     }, () => this.updateWeather())
-    
-    console.log("locationName:", data)
   })
-    
   }
 
   render(){
@@ -67,10 +76,9 @@ class App extends Component {
       isLoading,
       cityName,
       temperature,
-      isDay,
       text,
-      iconURL,
-      //forecastdays
+      icon,
+      forecastdays
     } = this.state;
 
 
@@ -82,15 +90,14 @@ class App extends Component {
           <div className="top-section">
             <TopSection 
               location={cityName} 
-              temperature={temperature} 
-              isDay={isDay} 
+              temperature={temperature}
               text={text} 
-              iconURL={iconURL}
+              icon={icon}
               eventEmitter={this.props.eventEmitter}/>
             </div>
             )
           }
-          <div className="top-section"><BottomSection /></div>
+          <div className="top-section"><BottomSection forecastdays={forecastdays}/></div>
         </div>
       </div>
     )
